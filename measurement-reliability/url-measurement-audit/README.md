@@ -1,46 +1,37 @@
-# Web Analytics URL Measurement Audit
+# URL Measurement Audit
 
-A vendor-neutral, public-safe measurement reliability project that turns noisy URL-level analytics data into prioritized remediation work.
-
-## What it does
-
-The notebook demonstrates an end-to-end analytical workflow:
-
-- canonicalize URLs while removing tracking noise,
-- preserve traffic volume during aggregation,
-- join browser/network inspection outcomes,
-- validate expected vs. observed measurement fields,
-- distinguish tagging defects from broken URLs and uncertain captures,
-- group related defects into remediation units,
-- prioritize fixes by traffic impact,
-- validate transformations with explicit invariants.
+A public-safe measurement reliability project combining browser/network collection with analytical validation and remediation prioritization.
 
 ## Repository layout
 
 ```text
 url-measurement-audit/
 ├── README.md
+├── requirements.txt
 ├── web_analytics_url_measurement_audit.ipynb
-└── requirements.txt
+└── src/
+    └── browser_measurement_collector.py
 ```
 
-## Run locally
+## Collector
+
+The collector uses Playwright to inspect URLs and capture the first supported analytics page-view request. It demonstrates async browser automation, request interception, AppMeasurement/Web SDK parsing, first-page-view identification, soft-404 handling, consent-banner handling, concurrent processing, and checkpoint/resume.
+
+### Example
 
 ```bash
-pip install -r requirements.txt
-jupyter notebook web_analytics_url_measurement_audit.ipynb
+python src/browser_measurement_collector.py \
+  --input normalized_urls.csv \
+  --output inspection_results.csv \
+  --http-precheck
 ```
 
-The notebook is self-contained and uses synthetic data only. It makes no external network calls.
+The input file must contain a `normalized_url` column.
 
-## Portfolio positioning
+## Notebook
 
-This project is designed to demonstrate **measurement reliability, product analytics, data-quality engineering, and root-cause isolation** rather than a vendor-specific implementation.
-
-A central principle is:
-
-> A metric anomaly is not automatically a business anomaly. Validate the measurement before interpreting the behavior.
+`web_analytics_url_measurement_audit.ipynb` consumes generalized inspection outputs and shows how to distinguish healthy measurement from defects, separate dead URLs and uncertain captures, group related issues into remediation units, prioritize remediation using traffic impact, and validate transformations with explicit invariants.
 
 ## Public-data disclaimer
 
-All domains, URLs, traffic counts, field names, and inspection outcomes are synthetic or generalized. No production identifiers, customer data, internal URLs, credentials, proprietary capture scripts, or real output values are included.
+All names, domains, traffic counts, field names, and examples are synthetic or generalized. No production identifiers, company-specific domains, internal URLs, credentials, proprietary rules, or real business outputs are included.
